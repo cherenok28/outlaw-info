@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 const cors = require('cors');
 const app = express();
 
-// Разрешаем CORS для всех доменов (чтобы VK-расширение могло обращаться)
+// Разрешаем CORS для всех доменов
 app.use(cors());
 app.use(express.json());
 
@@ -14,17 +14,19 @@ app.post('/outlaw', async (req, res) => {
       headers: {
         "Accept": "application/json"
       }
-      // НЕ указываем credentials, прокси отдаёт данные без приватных куки
     });
-
     const text = await response.text();  // текстовый JSON
     res.status(response.status)
        .type('application/json')
        .send(text);
-
   } catch (e) {
     res.status(502).json({ error: "proxy_error", detail: e.message });
   }
+});
+
+// Добавьте обработку GET-запроса
+app.get('/outlaw', (req, res) => {
+  res.status(200).json({ message: "API работает" });
 });
 
 const port = process.env.PORT || 3000;
