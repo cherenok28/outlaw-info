@@ -3,7 +3,6 @@ const fetch = require('node-fetch');
 const cors = require('cors');
 const app = express();
 
-// Разрешаем CORS для всех доменов
 app.use(cors());
 app.use(express.json());
 
@@ -26,33 +25,39 @@ app.post('/outlaw', async (req, res) => {
 });
 
 // Обработка GET-запроса /get-player-info
-app.get('/get-player-info', (req, res) => {
-  const id = req.query.id; // получаем id из URL
+app.get('/get-player-info', async (req, res) => {
+  const id = req.query.id; 
   console.log('Запрос для ID:', id);
 
-  // Тут можно заменить на реальную логику поиска из базы
   if (!id) {
     return res.status(400).json({ error: "missing_id" });
   }
 
-  // Для теста — возвращаем фиктивные данные для конкретного ID
-  if (id === '150530771') {
-    return res.json({
-      name: "Тестовый игрок",
-      desc: "Тестовый базар",
-      talents: "Тестовые таланты",
-      obs: "1000",
-      auth: "Высокий",
-      achievements: "Достижения 1, 2",
-      keys: true
+  try {
+    // Сделайте запрос к реальному API или базе данных
+    const response = await fetch("https://outlaw-game.online/ajax/home_ajax.php", {
+      method: "POST",
+      headers: {
+        "Accept": "application/json"
+      }
+      // добавьте body, если API требует
     });
-  }
 
-  // Для остальных ID — возвращаем 404 или пустой ответ
-  res.status(404).json({ notFound: true });
+    if (!response.ok) {
+      return res.status(response.status).json({ notFound: true });
+    }
+
+    const data = await response.json();
+
+    // Тут можно: обработать data или оставить как есть
+    return res.json(data);
+  } catch (e) {
+    console.error('Ошибка API:', e);
+    return res.status(502).json({ error: "proxy_error", detail: e.message });
+  }
 });
 
-// Тестовая проверка
+// Тестовая страница статуса
 app.get('/status', (req, res) => {
   res.json({ message: "API работает" });
 });
