@@ -28,9 +28,16 @@ app.get('/get-player-info', async (req, res) => {
     }
     const textResponse = await response.text();
     console.log('Ответ сервера:', textResponse);
-    const data = JSON.parse(textResponse); // вручную парсим, чтобы ловить ошибки
-    
-    const data = await response.json();
+
+    // Парсим вручную, ловим ошибки
+    let data;
+    try {
+      data = JSON.parse(textResponse);
+    } catch (e) {
+      return res.status(502).json({ error: "invalid_json", detail: e.message });
+    }
+
+    // Теперь отправляем парсенные данные клиенту
     res.json(data);
   } catch (e) {
     res.status(502).json({ error: "proxy_error", detail: e.message });
