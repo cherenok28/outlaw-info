@@ -26,6 +26,10 @@ app.get('/get-player-info', async (req, res) => {
     if (!response.ok) {
       return res.status(response.status).json({ notFound: true });
     }
+    const textResponse = await response.text();
+    console.log('Ответ сервера:', textResponse);
+    const data = JSON.parse(textResponse); // вручную парсим, чтобы ловить ошибки
+    
     const data = await response.json();
     res.json(data);
   } catch (e) {
