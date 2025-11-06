@@ -1,5 +1,5 @@
 {
-  "name": "outlaw-proxy",
+  "name": "outlaw-info",
   "version": "1.0.0",
   "description": "Прокси для Outlaw AJAX API",
   "main": "server.js",
